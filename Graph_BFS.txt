@@ -1,0 +1,75 @@
+import java.io.*;
+import java.util.*;
+class BFS
+{
+   public static void main(String args[] ) throws Exception {
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+     
+    System.out.print("Enter number of vertices : ");
+    int v = Integer.parseInt(br.readLine()); //now we use loop to enter the neighbours of the vertices
+    ArrayList<ArrayList<Integer>> adj_list = new ArrayList<ArrayList<Integer>>();
+     
+     for(int i = 0; i<v; i++)
+     {
+         System.out.print("\nEnter connected elements of vertex "+(i+1)+" : "); 
+         adj_list.add(new ArrayList<Integer>()); //adding new rows to the list
+         String str = br.readLine(); //taking space seperated inputs
+         String[] s = str.split(" ");
+         int l = s.length;
+         for(int j = 0; j<l; j++)
+         {
+             adj_list.get(i).add(Integer.parseInt(s[j])); //adding elements to the adjecency list of i'th vertex
+         }
+    }
+    /* System.out.println(adj_list.size());
+    for(int i = 0; i<adj_list.size(); i++)
+    {
+        for(int j = 0 ; j < adj_list.get(i).size(); j++)
+        {
+            System.out.print(adj_list.get(i).get(j)+" ");
+        }
+        System.out.println();
+    }
+    */ //uncomment if you want to see what have you entered
+    System.out.println("\nEnter the number of queries : ");
+    int q = Integer.parseInt(br.readLine());
+     while(q-->0)
+     {
+       // an array which keeps the track of visited vertices
+       int[] visited = new int[v+1];  
+       Arrays.fill(visited,0); //filling all the vertices as not visited
+     
+       // A queue to store the temporary vertice whic are to be traversed
+       ArrayList<Integer> queue = new ArrayList<Integer>();
+     
+       System.out.print("\nEnter the starting element : ");
+       int ele = Integer.parseInt(br.readLine());
+       queue.add(ele); //adding the first element in the queue
+      
+       System.out.print("\nEnter the element to be searched : ");
+       int src = Integer.parseInt(br.readLine());
+       int found=0;
+       while(queue.size()!=0 && found==0)
+       {
+         int t = queue.get(0); t-=1;//decreasing t as we have 0 indexed array
+         visited[t]=1;
+         int len_of_list = adj_list.get(t).size();
+         for(int i = 0; i<len_of_list; i++)
+         {
+             int list_ele = adj_list.get(t).get(i);
+             if(list_ele==src) 
+             {
+                 found=1; break;
+             }
+             else if(visited[list_ele]==0)
+             {
+                 queue.add(list_ele);
+             }
+         }
+         queue.remove(0);
+       }
+       if(found==1) System.out.println("Found a way to "+src+" from "+ele);
+       else System.out.println("No path found to "+src+" from "+ele);
+    }
+  }
+}
