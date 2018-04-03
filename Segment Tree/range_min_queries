@@ -1,0 +1,80 @@
+//Segment Tree
+//Range minimum queries
+#include<bits/stdc++.h>
+#define ld long double
+#define ll long long
+#define mx 1000000000
+using namespace std;
+ll tree[10000000]; // All variables are declared globally as there are multiple functions accessing both
+ll arr[1000000]; //tree stores the formed tree and arr stores the actual array
+void build(ll node, ll start, ll end) // build the tree
+{
+    if(start==end) // when we reach the leaf node recursively we simply put the value at node
+    tree[node]=arr[start];
+    
+    else
+    {
+        ll mid = (start + end)/2;
+        build(node*2, start, mid);  // else we build both sides recursively and store the min of both branches
+        build(node*2+1, mid+1, end);
+        tree[node] = min(tree[node*2], tree[node*2+1]);
+    }
+}
+void update(ll node, ll start, ll end, ll id, ll value)
+{
+    if(start==end)  // reaching the leaf node and updating the value in both the sides
+    {
+        arr[id]=value;
+        tree[node]=value;
+    }
+    
+    else
+    {
+        ll mid = (start+end)/2;
+        if(id<=mid) //if index present in left side
+        update(node*2, start, mid, id, value);
+        else
+        update(node*2+1, mid+1, end, id, value); //if index present in right side
+        tree[node] = min(tree[node*2], tree[node*2+1]); //updating the current node as well after getting info from child nodes
+    }
+}
+ll query(ll node, ll start, ll end, ll l, ll r)
+{
+    if(start>r || end<l) return mx; //if out of range return somthing that will not harm the result..
+    // for sum return 0 as it will not get summed up. here I chose a large number not to affect the min
+    else if(start>=l && end<=r) return tree[node]; // if got the crct node
+    else
+    {   // if the range partially lies inside we go recursively to find the elements and return the desired result
+        ll mid = (start+end)/2;
+        ll a1 = query(node*2, start, mid, l, r);
+        ll a2 = query(node*2+1, mid+1, end, l, r);
+        return min(a1,a2);
+    }
+}
+int main()
+{
+	ios_base::sync_with_stdio(false);
+	cin.tie(0), cout.tie(0);
+	ll q, i, j, k, n, m;
+	cin>>n>>q;
+	for(i=1; i<=n; i++) cin>>arr[i];
+	build(1, 1, n);
+    while(q--)
+	{
+	    char c;
+	    cin>>c;
+	    if(c=='u') 
+	    {
+	        ll ind, val;
+	        cin>>ind>>val;
+	        update(1, 1, n, ind, val);
+	    }
+	    else
+	    {
+	        ll l, r;
+	        cin>>l>>r;
+	        cout<<query(1, 1, n, l, r)<<endl;
+	    }
+	}
+	return 0;
+}
